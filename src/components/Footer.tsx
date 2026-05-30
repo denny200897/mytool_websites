@@ -11,6 +11,7 @@ export default function Footer() {
         </a>
         <a className="font-label-xs text-label-xs text-on-secondary-container hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">
           
+          
         </a>
       </div>
     </footer>
