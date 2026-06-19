@@ -1,4 +1,5 @@
 {
+  "buildCommand": "node scripts/fetch-imgly.mjs && tsc -b && vite build",
   "headers": [
     {
       "source": "/(.*)",
