@@ -4,12 +4,14 @@ import react from '@vitejs/plugin-react'
 // Content-Security-Policy: no third-party origins at all — every asset
 // (fonts, ffmpeg core, tesseract core + language data) is self-hosted.
 // The only non-'self' tokens are the platform primitives WebAssembly and
-// canvas require: 'wasm-unsafe-eval' (run wasm), blob: (wasm/worker URLs),
-// data: (canvas image exports). 'unsafe-inline' style covers inline <style>
-// in the Markdown→PDF print window and React style attributes.
+// canvas require: 'wasm-unsafe-eval' (run wasm), 'unsafe-eval' (onnxruntime-web
+// in the AI background-removal tool calls new Function() to bootstrap its wasm
+// runtime), blob: (wasm/worker URLs), data: (canvas image exports).
+// 'unsafe-inline' style covers inline <style> in the Markdown→PDF print window
+// and React style attributes.
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' 'wasm-unsafe-eval' blob:",
+  "script-src 'self' 'wasm-unsafe-eval' 'unsafe-eval' blob:",
   "worker-src 'self' blob:",
   "style-src 'self' 'unsafe-inline'",
   "font-src 'self'",
