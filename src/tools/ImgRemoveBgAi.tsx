@@ -27,9 +27,15 @@ export default function ImgRemoveBgAi() {
     setBusy(true)
     setProgress('載入 AI 模型中…')
     try {
-      // Dynamically imported so the ~40MB model + wasm only load on demand.
+      // Dynamically imported so the ~50MB model + wasm only load on demand.
       const { removeBackground } = await import('@imgly/background-removal')
       const blob = await removeBackground(files[0], {
+        // Serve model + wasm from our own origin (public/imgly) instead of the
+        // staticimgly.com CDN, so everything stays on-device and we avoid
+        // CORS / network-blocking errors.
+        publicPath: `${window.location.origin}/imgly/`,
+        device: 'cpu',
+        model: 'isnet_quint8',
         progress: (key, current, total) => {
           const pct = total ? Math.round((current / total) * 100) : 0
           setProgress(key.startsWith('fetch') ? `下載模型中… ${pct}%` : `去背運算中… ${pct}%`)

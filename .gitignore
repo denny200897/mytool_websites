@@ -8,3 +8,6 @@ npm-debug.log*
 
 # TS build artifacts
 *.tsbuildinfo
+
+# AI background-removal model assets (fetched by scripts/fetch-imgly.mjs on build)
+public/imgly
