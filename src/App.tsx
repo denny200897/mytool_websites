@@ -20,6 +20,7 @@ const toolModules: Record<string, () => Promise<{ default: React.ComponentType }
   'img-convert': () => import('./tools/ImgConvert'),
   'img-resize': () => import('./tools/ImgResize'),
   'img-crop': () => import('./tools/ImgCrop'),
+  'img-eraser': () => import('./tools/ImgEraser'),
   'img-compress': () => import('./tools/ImgCompress'),
   'img-remove-bg': () => import('./tools/ImgRemoveBg'),
   'img-remove-bg-ai': () => import('./tools/ImgRemoveBgAi'),

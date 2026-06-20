@@ -42,6 +42,7 @@ export const CATEGORIES: CategoryDef[] = [
       { id: 'img-convert', name: '轉換圖片格式', subtitle: 'Convert image', icon: 'transform', slug: 'img-convert', status: 'ready' },
       { id: 'img-resize', name: '調整圖片大小', subtitle: 'Resize image', icon: 'aspect_ratio', slug: 'img-resize', status: 'ready' },
       { id: 'img-crop', name: '裁剪圖片', subtitle: 'Crop image', icon: 'crop', slug: 'img-crop', status: 'ready' },
+      { id: 'img-eraser', name: '圖片橡皮擦', subtitle: 'Erase image', icon: 'ink_eraser', slug: 'img-eraser', status: 'ready' },
       { id: 'img-compress', name: '壓縮圖片', subtitle: 'Compress image', icon: 'compress', slug: 'img-compress', status: 'ready' },
       { id: 'img-remove-bg', name: '去除背景', subtitle: 'Remove background', icon: 'auto_fix_high', slug: 'img-remove-bg', status: 'ready' },
       { id: 'img-remove-bg-ai', name: 'AI 自動去背', subtitle: 'AI remove background', icon: 'auto_awesome', slug: 'img-remove-bg-ai', status: 'ready' },
