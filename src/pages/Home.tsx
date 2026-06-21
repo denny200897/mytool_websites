@@ -2,9 +2,15 @@ import { Link } from 'react-router-dom'
 import Icon from '../components/Icon'
 import { CATEGORIES, findTool } from '../lib/tools'
 import { useHistory } from '../lib/history'
+import { useSeo } from '../lib/seo'
 
 export default function Home() {
   const history = useHistory()
+  useSeo({
+    title: '',
+    description:
+      '免費線上檔案工具箱，提供 PDF、圖片、影片、文件、壓縮檔與資料格式轉換等工具。所有檔案都在你的瀏覽器本機處理，不上傳伺服器，安全、快速、免註冊。',
+  })
 
   // Derive a unique "recently used" list of tools from history.
   const recent = Array.from(new Set(history.map((h) => h.toolSlug)))

@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom'
 import Icon from '../components/Icon'
+import { useSeo } from '../lib/seo'
 
 export default function NotFound() {
+  useSeo({ title: '找不到頁面', description: '找不到這個頁面或工具，請回到首頁瀏覽所有檔案工具。' })
   return (
     <main className="flex-grow flex flex-col items-center justify-center gap-md p-xl text-center">
       <Icon name="search_off" size={40} className="text-secondary" />

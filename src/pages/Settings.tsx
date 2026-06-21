@@ -1,7 +1,9 @@
 import Icon from '../components/Icon'
 import { clearHistory } from '../lib/history'
+import { useSeo } from '../lib/seo'
 
 export default function Settings() {
+  useSeo({ title: '設定', description: '管理檔案工具箱的隱私與本機資料設定。' })
   return (
     <main className="flex-grow container mx-auto px-margin py-margin max-w-2xl w-full flex flex-col gap-margin">
       <h1 className="font-headline-lg text-headline-lg text-on-surface">設定</h1>

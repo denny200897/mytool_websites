@@ -6,7 +6,8 @@ import History from './pages/History'
 import Settings from './pages/Settings'
 import NotFound from './pages/NotFound'
 import ComingSoon from './pages/ComingSoon'
-import { findTool } from './lib/tools'
+import { findTool, toolDescription } from './lib/tools'
+import { useSeo } from './lib/seo'
 
 // Map each tool slug to a lazily-loaded component so heavy libs
 // (ffmpeg, tesseract, pdf-lib…) only load when their tool is opened.
@@ -42,6 +43,10 @@ const toolModules: Record<string, () => Promise<{ default: React.ComponentType }
 function ToolLoader() {
   const { slug = '' } = useParams()
   const found = findTool(slug)
+  useSeo({
+    title: found ? found.tool.name : '找不到工具',
+    description: found ? toolDescription(found.tool) : '找不到這個工具，請回到首頁瀏覽所有檔案工具。',
+  })
   if (!found) return <NotFound />
   if (found.tool.status === 'soon') return <ComingSoon name={found.tool.name} />
   const loader = toolModules[slug]

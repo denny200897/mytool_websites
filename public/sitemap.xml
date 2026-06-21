@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://tool.denny.li/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://tool.denny.li/tool/pdf-merge</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/pdf-split</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/pdf-compress</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/pdf-encrypt</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/pdf-decrypt</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/pdf-images</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/img-convert</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/img-resize</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/img-crop</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/img-eraser</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/img-compress</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/img-remove-bg</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/img-remove-bg-ai</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/img-watermark</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/img-to-pdf</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/doc-ocr</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/doc-md</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/doc-md-pdf</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/zip-extract</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/zip-create</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/data-csv-excel</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/data-json</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/data-xml-json</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/video-convert</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/video-trim</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tool.denny.li/tool/video-mute</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+</urlset>

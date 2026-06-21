@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom'
 import Icon from '../components/Icon'
 import { clearHistory, timeAgo, useHistory } from '../lib/history'
+import { useSeo } from '../lib/seo'
 
 export default function History() {
   const history = useHistory()
+  useSeo({ title: '歷史紀錄', description: '查看你最近使用過的檔案工具紀錄，紀錄只保存在你的瀏覽器本機。' })
 
   return (
     <main className="flex-grow container mx-auto px-margin py-margin max-w-3xl w-full flex flex-col gap-margin">

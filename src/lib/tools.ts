@@ -93,6 +93,11 @@ export const CATEGORIES: CategoryDef[] = [
 
 export const ALL_TOOLS: ToolDef[] = CATEGORIES.flatMap((c) => c.tools)
 
+/** Keyword-rich SEO description for a tool page. */
+export function toolDescription(tool: ToolDef): string {
+  return `免費線上${tool.name}（${tool.subtitle}）。檔案在你的瀏覽器本機處理，不會上傳到伺服器，安全、快速、免註冊。`
+}
+
 export function findTool(slug: string): { tool: ToolDef; category: CategoryDef } | undefined {
   for (const category of CATEGORIES) {
     const tool = category.tools.find((t) => t.slug === slug)
