@@ -2,7 +2,7 @@ import { useState } from 'react'
 import JSZip from 'jszip'
 import Dropzone from '../components/Dropzone'
 import { Banner, Button, ToolFrame } from '../components/ui'
-import { downloadBlob, formatBytes } from '../lib/utils'
+import { downloadBlob, formatBytes, sanitizeFilename } from '../lib/utils'
 import Icon from '../components/Icon'
 import { addHistory } from '../lib/history'
 
@@ -67,8 +67,8 @@ export default function ZipExtract() {
           {entries.map((e) => (
             <div key={e.name} className="flex items-center gap-md px-md h-[40px] hover:bg-surface-variant transition-colors">
               <Icon name="draft" size={16} className="text-outline" />
-              <span className="font-body-sm text-body-sm text-on-surface flex-grow truncate" title={e.name}>
-                {e.name}
+              <span className="font-body-sm text-body-sm text-on-surface flex-grow truncate" title={sanitizeFilename(e.name)}>
+                {sanitizeFilename(e.name)}
               </span>
               <span className="font-label-xs text-label-xs text-secondary">{formatBytes(e.size)}</span>
               <button

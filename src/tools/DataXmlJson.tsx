@@ -21,7 +21,7 @@ export default function DataXmlJson() {
   const run = () => {
     setError('')
     try {
-      const parser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: '@_' })
+      const parser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: '@_', processEntities: false, htmlEntities: false })
       const obj = parser.parse(input)
       setOutput(JSON.stringify(obj, null, 2))
       addHistory({ toolSlug: 'data-xml-json', toolName: 'XML 轉 JSON', fileName: 'data.json', result: 'JSON', ok: true })

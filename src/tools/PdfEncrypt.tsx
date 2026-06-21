@@ -13,9 +13,14 @@ export default function PdfEncrypt() {
   const [error, setError] = useState('')
 
   const mismatch = confirm.length > 0 && password !== confirm
+  const weakPassword = password.length > 0 && password.length < 8
 
   const run = async () => {
     setError('')
+    if (password.length < 8) {
+      setError('密碼至少需要 8 個字元。')
+      return
+    }
     if (password !== confirm) {
       setError('兩次輸入的密碼不一致。')
       return
@@ -52,11 +57,12 @@ export default function PdfEncrypt() {
             <TextInput type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="再次輸入" />
           </Field>
           {mismatch && <span className="font-label-xs text-label-xs text-error">兩次密碼不一致</span>}
+          {weakPassword && <span className="font-label-xs text-label-xs text-error">密碼至少需要 8 個字元</span>}
         </div>
       )}
       {error && <Banner kind="error">{error}</Banner>}
       <div className="flex justify-center">
-        <Button onClick={run} disabled={!files[0] || !password || mismatch || busy} icon="lock">
+        <Button onClick={run} disabled={!files[0] || !password || mismatch || weakPassword || busy} icon="lock">
           {busy ? '加密中…' : '加密 PDF'}
         </Button>
       </div>
