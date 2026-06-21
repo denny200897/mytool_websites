@@ -102,20 +102,41 @@ export default function MarkdownToPdf() {
       win.document.open()
       win.document.write(doc)
       win.document.close()
-      // Wait for layout/fonts, then open the print dialog (choose「另存為 PDF」).
-      win.onload = () => {
-        win.focus()
-        win.print()
-      }
-      // Fallback in case onload already fired.
-      setTimeout(() => {
+
+      // Print only once, and only after images have finished loading — otherwise
+      // the print dialog snapshots the page while images are still blank.
+      let printed = false
+      const triggerPrint = () => {
+        if (printed) return
+        printed = true
         try {
           win.focus()
           win.print()
         } catch {
           /* ignore */
         }
-      }, 600)
+      }
+      const waitForImages = () => {
+        const imgs = Array.from(win.document.images)
+        const pending = imgs.filter((img) => !img.complete)
+        if (pending.length === 0) {
+          triggerPrint()
+          return
+        }
+        let left = pending.length
+        const done = () => {
+          if (--left <= 0) triggerPrint()
+        }
+        pending.forEach((img) => {
+          img.addEventListener('load', done)
+          img.addEventListener('error', done)
+        })
+        // Safety net: don't let a single hanging image block printing forever.
+        setTimeout(triggerPrint, 8000)
+      }
+      win.onload = waitForImages
+      // Fallback in case onload already fired before the handler was attached.
+      setTimeout(waitForImages, 300)
       addHistory({ toolSlug: 'doc-md-pdf', toolName: 'Markdown 轉 PDF', fileName: files[0]?.name ?? 'document.md', result: 'PDF', ok: true })
     } catch (e) {
       setError((e as Error).message || '產生失敗。')
@@ -135,6 +156,9 @@ export default function MarkdownToPdf() {
       </div>
       <Banner kind="info">
         會開啟列印視窗，在「目的地」選擇<strong>「另存為 PDF」</strong>即可儲存。已自動移除頁首頁尾；若瀏覽器仍顯示網址或日期，請在對話框中關閉「頁首及頁尾」選項。
+      </Banner>
+      <Banner kind="info">
+        圖片支援<strong>完整網址（https://…）</strong>或 <strong>data: 內嵌</strong>；本機相對路徑（如 <code>./img.png</code>）因瀏覽器無法存取本機檔案而無法顯示。系統會等圖片載入完成後才開啟列印。
       </Banner>
       {error && <Banner kind="error">{error}</Banner>}
       <div className="flex justify-center">
