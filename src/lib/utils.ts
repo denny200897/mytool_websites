@@ -30,6 +30,41 @@ export function downloadBlob(data: Blob | Uint8Array | ArrayBuffer, filename: st
   setTimeout(() => URL.revokeObjectURL(url), 4000)
 }
 
+/** A processed output ready to be saved. */
+export interface NamedBlob {
+  name: string
+  blob: Blob
+}
+
+/**
+ * Save one or more processed results. A single result downloads directly;
+ * multiple results are bundled into one ZIP so the browser only prompts once.
+ * Duplicate names inside the ZIP are de-duplicated with a numeric suffix.
+ */
+export async function downloadResults(results: NamedBlob[], zipName: string, mime?: string) {
+  if (results.length === 0) return
+  if (results.length === 1) {
+    downloadBlob(results[0].blob, results[0].name, mime)
+    return
+  }
+  const { default: JSZip } = await import('jszip')
+  const zip = new JSZip()
+  const used = new Map<string, number>()
+  for (const { name, blob } of results) {
+    let safe = sanitizeFilename(name)
+    if (used.has(safe)) {
+      const n = used.get(safe)! + 1
+      used.set(safe, n)
+      safe = replaceExt(safe, `${n}.${safe.split('.').pop() ?? ''}`)
+    } else {
+      used.set(safe, 1)
+    }
+    zip.file(safe, blob)
+  }
+  const out = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } })
+  downloadBlob(out, sanitizeFilename(zipName), 'application/zip')
+}
+
 /** Human readable file size. */
 export function formatBytes(bytes: number): string {
   if (bytes === 0) return '0 B'

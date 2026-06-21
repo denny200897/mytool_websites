@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Dropzone from '../components/Dropzone'
 import { Banner, Button, Field, Select, TextInput, ToolFrame } from '../components/ui'
 import { canvasToBlob, loadImage } from '../lib/canvas'
-import { downloadBlob, replaceExt } from '../lib/utils'
+import { downloadResults, replaceExt, type NamedBlob } from '../lib/utils'
 import { addHistory } from '../lib/history'
 
 type Pos = 'center' | 'tile' | 'bottom-right'
@@ -19,45 +19,49 @@ export default function ImgWatermark() {
     setError('')
     setBusy(true)
     try {
-      const img = await loadImage(files[0])
-      const canvas = document.createElement('canvas')
-      canvas.width = img.naturalWidth
-      canvas.height = img.naturalHeight
-      const ctx = canvas.getContext('2d')!
-      ctx.drawImage(img, 0, 0)
-      const fontSize = Math.max(16, Math.round(canvas.width / 18))
-      ctx.font = `600 ${fontSize}px Geist, sans-serif`
-      ctx.fillStyle = `rgba(0,0,0,${opacity})`
-      ctx.textBaseline = 'middle'
+      const results: NamedBlob[] = []
+      for (const file of files) {
+        const img = await loadImage(file)
+        const canvas = document.createElement('canvas')
+        canvas.width = img.naturalWidth
+        canvas.height = img.naturalHeight
+        const ctx = canvas.getContext('2d')!
+        ctx.drawImage(img, 0, 0)
+        const fontSize = Math.max(16, Math.round(canvas.width / 18))
+        ctx.font = `600 ${fontSize}px Geist, sans-serif`
+        ctx.fillStyle = `rgba(0,0,0,${opacity})`
+        ctx.textBaseline = 'middle'
 
-      if (pos === 'tile') {
-        ctx.textAlign = 'center'
-        const step = fontSize * 8
-        ctx.save()
-        ctx.rotate(-Math.PI / 6)
-        for (let y = -canvas.height; y < canvas.height * 2; y += step) {
-          for (let x = -canvas.width; x < canvas.width * 2; x += step * 2) {
-            ctx.fillText(text, x, y)
+        if (pos === 'tile') {
+          ctx.textAlign = 'center'
+          const step = fontSize * 8
+          ctx.save()
+          ctx.rotate(-Math.PI / 6)
+          for (let y = -canvas.height; y < canvas.height * 2; y += step) {
+            for (let x = -canvas.width; x < canvas.width * 2; x += step * 2) {
+              ctx.fillText(text, x, y)
+            }
           }
+          ctx.restore()
+        } else if (pos === 'bottom-right') {
+          ctx.textAlign = 'right'
+          ctx.fillText(text, canvas.width - fontSize, canvas.height - fontSize)
+        } else {
+          ctx.textAlign = 'center'
+          ctx.save()
+          ctx.translate(canvas.width / 2, canvas.height / 2)
+          ctx.rotate(-Math.PI / 6)
+          ctx.fillText(text, 0, 0)
+          ctx.restore()
         }
-        ctx.restore()
-      } else if (pos === 'bottom-right') {
-        ctx.textAlign = 'right'
-        ctx.fillText(text, canvas.width - fontSize, canvas.height - fontSize)
-      } else {
-        ctx.textAlign = 'center'
-        ctx.save()
-        ctx.translate(canvas.width / 2, canvas.height / 2)
-        ctx.rotate(-Math.PI / 6)
-        ctx.fillText(text, 0, 0)
-        ctx.restore()
-      }
 
-      const isJpeg = /\.jpe?g$/i.test(files[0].name)
-      const mime = isJpeg ? 'image/jpeg' : 'image/png'
-      const blob = await canvasToBlob(canvas, mime)
-      downloadBlob(blob, replaceExt(files[0].name, isJpeg ? 'watermarked.jpg' : 'watermarked.png'), mime)
-      addHistory({ toolSlug: 'img-watermark', toolName: '添加浮水印', fileName: files[0].name, result: 'OK', ok: true })
+        const isJpeg = /\.jpe?g$/i.test(file.name)
+        const mime = isJpeg ? 'image/jpeg' : 'image/png'
+        const blob = await canvasToBlob(canvas, mime)
+        results.push({ name: replaceExt(file.name, isJpeg ? 'watermarked.jpg' : 'watermarked.png'), blob })
+      }
+      await downloadResults(results, 'watermarked-images.zip')
+      addHistory({ toolSlug: 'img-watermark', toolName: '添加浮水印', fileName: files.length > 1 ? `${files.length} 張圖片` : files[0].name, result: 'OK', ok: true })
     } catch (e) {
       setError((e as Error).message)
       addHistory({ toolSlug: 'img-watermark', toolName: '添加浮水印', fileName: files[0]?.name ?? '', result: '失敗', ok: false })
@@ -67,8 +71,8 @@ export default function ImgWatermark() {
   }
 
   return (
-    <ToolFrame title="添加浮水印" subtitle="在圖片上加上文字浮水印。">
-      <Dropzone accept="image/*" kind="image" files={files} onFiles={setFiles} hint="選擇一張圖片" />
+    <ToolFrame title="添加浮水印" subtitle="在圖片上加上文字浮水印。可一次上傳多張批次處理。">
+      <Dropzone accept="image/*" kind="image" multiple files={files} onFiles={setFiles} hint="可選擇一張或多張圖片" />
       {files[0] && (
         <div className="border border-outline-variant rounded bg-surface-container-lowest p-md flex flex-col gap-md">
           <Field label="浮水印文字">
@@ -99,7 +103,7 @@ export default function ImgWatermark() {
       {error && <Banner kind="error">{error}</Banner>}
       <div className="flex justify-center">
         <Button onClick={run} disabled={!files[0] || !text || busy} icon="water_drop">
-          {busy ? '處理中…' : '加上浮水印'}
+          {busy ? '處理中…' : files.length > 1 ? `加上浮水印 ${files.length} 張（ZIP）` : '加上浮水印'}
         </Button>
       </div>
     </ToolFrame>

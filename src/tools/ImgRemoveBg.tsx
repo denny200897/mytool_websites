@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import Dropzone from '../components/Dropzone'
 import { Banner, Button, Field, ToolFrame } from '../components/ui'
 import { canvasToBlob, loadImage } from '../lib/canvas'
-import { downloadBlob, replaceExt } from '../lib/utils'
+import { downloadResults, replaceExt, type NamedBlob } from '../lib/utils'
 import { addHistory } from '../lib/history'
 
 /** Read the average colour of the four corners as a best-guess background colour. */
@@ -66,13 +66,13 @@ export default function ImgRemoveBg() {
   }, [files])
 
   /** Render image onto a canvas, knocking out pixels close to `color`. */
-  const render = (canvas: HTMLCanvasElement) => {
-    if (!img) return
-    canvas.width = img.naturalWidth
-    canvas.height = img.naturalHeight
+  const render = (canvas: HTMLCanvasElement, source: HTMLImageElement | null = img) => {
+    if (!source) return
+    canvas.width = source.naturalWidth
+    canvas.height = source.naturalHeight
     const ctx = canvas.getContext('2d')!
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    ctx.drawImage(img, 0, 0)
+    ctx.drawImage(source, 0, 0)
     const target = fromHex(color)
     const data = ctx.getImageData(0, 0, canvas.width, canvas.height)
     const px = data.data
@@ -99,11 +99,17 @@ export default function ImgRemoveBg() {
     setError('')
     setBusy(true)
     try {
-      const canvas = document.createElement('canvas')
-      render(canvas)
-      const blob = await canvasToBlob(canvas, 'image/png')
-      downloadBlob(blob, replaceExt(files[0].name, 'nobg.png'), 'image/png')
-      addHistory({ toolSlug: 'img-remove-bg', toolName: '去除背景', fileName: files[0].name, result: 'PNG', ok: true })
+      const results: NamedBlob[] = []
+      for (const file of files) {
+        // The first file is already decoded as `img`; reuse it, load the rest.
+        const source = file === files[0] ? img : await loadImage(file)
+        const canvas = document.createElement('canvas')
+        render(canvas, source)
+        const blob = await canvasToBlob(canvas, 'image/png')
+        results.push({ name: replaceExt(file.name, 'nobg.png'), blob })
+      }
+      await downloadResults(results, 'nobg-images.zip', 'image/png')
+      addHistory({ toolSlug: 'img-remove-bg', toolName: '去除背景', fileName: files.length > 1 ? `${files.length} 張圖片` : files[0].name, result: 'PNG', ok: true })
     } catch (e) {
       setError((e as Error).message)
       addHistory({ toolSlug: 'img-remove-bg', toolName: '去除背景', fileName: files[0]?.name ?? '', result: '失敗', ok: false })
@@ -113,8 +119,8 @@ export default function ImgRemoveBg() {
   }
 
   return (
-    <ToolFrame title="去除背景" subtitle="移除單色 / 純色背景，輸出透明 PNG。適合純色或棚拍背景。" wide>
-      <Dropzone accept="image/*" kind="image" files={files} onFiles={setFiles} hint="選擇一張純色背景的圖片" />
+    <ToolFrame title="去除背景" subtitle="移除單色 / 純色背景，輸出透明 PNG。適合純色或棚拍背景。可一次上傳多張，套用相同顏色與容差批次去背。" wide>
+      <Dropzone accept="image/*" kind="image" multiple files={files} onFiles={setFiles} hint="可選擇一張或多張純色背景的圖片（預覽顯示第一張）" />
       {img && (
         <>
           <div className="border border-outline-variant rounded bg-surface-container-lowest p-md flex flex-col gap-md sm:flex-row sm:items-end">
@@ -161,7 +167,7 @@ export default function ImgRemoveBg() {
       {error && <Banner kind="error">{error}</Banner>}
       <div className="flex justify-center">
         <Button onClick={run} disabled={!img || busy} icon="auto_fix_high">
-          {busy ? '處理中…' : '去背並下載 PNG'}
+          {busy ? '處理中…' : files.length > 1 ? `去背 ${files.length} 張（ZIP）` : '去背並下載 PNG'}
         </Button>
       </div>
     </ToolFrame>
